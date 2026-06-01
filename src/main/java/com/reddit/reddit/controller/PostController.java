@@ -4,15 +4,13 @@ import com.reddit.reddit.dto.PostRequest;
 import com.reddit.reddit.entity.Post;
 import com.reddit.reddit.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-
 @RequestMapping("/api/posts")
-
 @CrossOrigin("*")
-
 public class PostController {
 
     @Autowired
@@ -20,62 +18,31 @@ public class PostController {
 
     @PostMapping
     public String createPost(
-
-            @RequestBody
-            PostRequest request
+            @RequestBody PostRequest request,
+            Authentication authentication
     ) {
-
-        return postService
-                .createPost(request);
+        return postService.createPost(request, authentication);
     }
 
     @GetMapping
     public List<Post> getAllPosts() {
-
-        return postService
-                .getAllPosts();
+        return postService.getAllPosts();
     }
 
     @GetMapping("/{id}")
-    public Post getPostById(
-
-            @PathVariable
-            Long id
-    ) {
-
-        return postService
-                .getPostById(id);
+    public Post getPostById(@PathVariable Long id) {
+        return postService.getPostById(id);
     }
 
     @PutMapping("/like/{id}")
-    public Post likePost(
-
-            @PathVariable
-            Long id
-    ) {
-
-        Post post =
-                postService.getPostById(id);
-
-        post.setLikes(
-                post.getLikes() + 1
-        );
-
+    public Post likePost(@PathVariable Long id) {
+        Post post = postService.getPostById(id);
+        post.setLikes(post.getLikes() + 1);
         return postService.savePost(post);
     }
 
     @GetMapping("/community/{communityId}")
-    public List<Post>
-    getPostsByCommunity(
-
-            @PathVariable
-            Long communityId
-    ) {
-
-        return postService
-                .getPostsByCommunity(
-                        communityId
-                );
+    public List<Post> getPostsByCommunity(@PathVariable Long communityId) {
+        return postService.getPostsByCommunity(communityId);
     }
-
 }
